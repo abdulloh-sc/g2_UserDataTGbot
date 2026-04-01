@@ -5,6 +5,7 @@ import uz.imaan.entity.status.Status;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class UserService {
 
@@ -16,6 +17,8 @@ public class UserService {
         User user = users.get(chatId);
         if (user == null){
             user = new User();
+            user.setId(UUID.randomUUID());
+            user.setChatId(chatId);
             users.put(chatId, user);
         }
         return user;
