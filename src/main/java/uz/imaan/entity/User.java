@@ -5,8 +5,8 @@ import java.util.UUID;
 public class User {
     private UUID id;
     private Long chatId;
-    private String ism;
-    private Integer yosh;
+    private String name;    // ism → name
+    private Integer age;    // yosh → age
 
     public UUID getId() {
         return id;
@@ -24,19 +24,19 @@ public class User {
         this.chatId = chatId;
     }
 
-    public String getIsm() {
-        return ism;
+    public String getName() {       // getIsm() → getName()
+        return name;
     }
 
-    public void setIsm(String ism) {
-        this.ism = ism;
+    public void setName(String name) {  // setIsm() → setName()
+        this.name = name;
     }
 
-    public Integer getYosh() {
-        return yosh;
+    public Integer getAge() {       // getYosh() → getAge()
+        return age;
     }
 
-    public void setYosh(Integer yosh) {
-        this.yosh = yosh;
+    public void setAge(Integer age) {   // setYosh() → setAge()
+        this.age = age;
     }
 }

@@ -13,68 +13,72 @@ public class MyBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        if (!update.hasMessage() || !update.getMessage().hasText()) return;
+        if (!update.hasMessage() || !   update.getMessage().hasText()) return;
 
         Long chatId = update.getMessage().getChatId();
-
         String text = update.getMessage().getText();
 
         User user = userService.addUser(chatId);
-
         Status status = userService.addStatus(chatId);
 
-        try{
-            if (text.equals("/start")){
-                userService.saveStatus(chatId, Status.ISM_KIRITISH);
-                message(chatId,"Ismingizni kiriting");
+        try {
+            if (text.equals("/start")) {
+                userService.saveStatus(chatId, Status.ENTER_NAME);
+                message(chatId, "Enter your name:");
                 return;
             }
-            if (text.equals("/restart")){
-                userService.restart(chatId);
-                message(chatId,"Bot qayta ishga tushirildi");
-                return;
-            }
-            switch (status){
-                case ISM_KIRITISH:
-                    user.setIsm(text);
-                    userService.saveStatus(chatId, Status.YOSH_KIRITISH);
-                    message(chatId,"Yoshingizni kiriting");
-                    break;
-                case YOSH_KIRITISH:
-                    try{
-                        int yosh = Integer.parseInt(text);
 
-                        if (yosh < 0 || yosh > 100){
-                            message(chatId,"Yoshingiz 0 - 100 oraligida bolishi kerak ");
+            if (text.equals("/restart")) {
+                userService.restart(chatId);
+                message(chatId, "Bot has been restarted.");
+                return;
+            }
+
+            if(text.equals("/users")){
+                message(chatId,userService.getAllUsers());
+            }
+
+            switch (status) {
+                case ENTER_NAME:
+                    user.setName(text);                              // setIsm → setName
+                    userService.saveStatus(chatId, Status.ENTER_AGE);
+                    message(chatId, "Enter your age:");
+                    break;
+
+                case ENTER_AGE:
+                    try {
+                        int age = Integer.parseInt(text);            // yosh → age
+
+                        if (age < 0 || age > 100) {
+                            message(chatId, "Age must be between 0 and 100.");
                             return;
                         }
 
-                        user.setYosh(yosh);
-                        userService.saveStatus(chatId, Status.YAKUNLANDI);
-                        message(chatId,"Ro'yxatdan o'tdingiz \n" +
-                                user.getId() + "\n" +
-                                user.getIsm() + "\n" +
-                                user.getYosh());
-                    } catch (Exception e){
-                        message(chatId,"Faqat son kiriting ");
+                        user.setAge(age);                            // setYosh → setAge
+                        userService.saveStatus(chatId, Status.COMPLETED);
+                        message(chatId, "Registration successful!\n" +
+                                "ID: " + user.getId() + "\n" +
+                                "Name: " + user.getName() + "\n" +  // getIsm → getName
+                                "Age: " + user.getAge());            // getYosh → getAge
+                    } catch (Exception e) {
+                        message(chatId, "Please enter a number only.");
                     }
                     break;
 
-                case YAKUNLANDI:
-                    message(chatId,"Siz allaqachon ro'yxatdan o'tgansiz");
+                case COMPLETED:
+                    message(chatId, "You are already registered.");
                     break;
 
                 default:
-                    message(chatId,"Botdan foydalanish uchun /start buyrug'ini bering");
+                    message(chatId, "Send /start to use the bot.");
+                    break;
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-
-
-    private void message(Long chatId, String text) throws Exception{
+    private void message(Long chatId, String text) throws Exception {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId.toString());
         sendMessage.setText(text);
@@ -82,7 +86,7 @@ public class MyBot extends TelegramLongPollingBot {
     }
 
     @Override
-    public String getBotToken(){
+    public String getBotToken() {
         return "8681756358:AAGoqS_Rgz-iTFHjn3yrnYssA7U2NthLch8";
     }
 
