@@ -29,6 +29,8 @@ public class UserService {
 
     public void saveStatus(Long chatId, Status status) {
         statuses.put(chatId, status);
+
+        users.get(chatId).status = status;
     }
 
     public void restart(Long chatId) {
@@ -51,4 +53,6 @@ public class UserService {
         }
         return sb.toString();
     }
+
+
 }

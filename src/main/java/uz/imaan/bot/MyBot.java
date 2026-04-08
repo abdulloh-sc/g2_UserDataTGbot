@@ -37,10 +37,37 @@ public class MyBot extends TelegramLongPollingBot {
             if(text.equals("/users")){
                 message(chatId,userService.getAllUsers());
             }
+            if(text.equals("/edit")){
+                if(user.getName() == null){
+                    message(chatId,"Please  /start to register first.");
+                    return;
+                }
+
+                message(chatId, """
+                        What do you want to change ?
+                        1 - name,
+                        2 - age
+                        """);
+                userService.saveStatus(chatId,Status.EDIT_STATUS);
+                return;
+            }
+
 
             switch (status) {
+
+                case EDIT_STATUS:
+                    if(text.equals("1")){
+                        userService.saveStatus(chatId,Status.EDIT_NAME);
+                        message(chatId,"Enter new name:");
+                    } else if(text.equals("2")){
+                        userService.saveStatus(chatId,Status.EDIT_AGE);
+                        message(chatId,"Enter new age:");
+                    } else {
+                        message(chatId,"Please choose 1 or 2.");
+                    }
+                    break;
                 case ENTER_NAME:
-                    user.setName(text);                              // setIsm → setName
+                    user.setName(text);
                     userService.saveStatus(chatId, Status.ENTER_AGE);
                     message(chatId, "Enter your age:");
                     break;
@@ -69,6 +96,27 @@ public class MyBot extends TelegramLongPollingBot {
                     message(chatId, "You are already registered.");
                     break;
 
+                case EDIT_NAME:
+                    user.setName(text);
+                    userService.saveStatus(chatId, Status.COMPLETED);
+                    message(chatId, "Name updated successfully!" + text);
+                    break;
+
+                    case EDIT_AGE:
+                        try{
+                            int age = Integer.parseInt(text);
+                            if(age < 0 || age > 100) {
+                                message(chatId, "Age must be between 0 and 100.");
+                                return;
+                            }
+                            user.setAge(age);
+                            userService.saveStatus(chatId, Status.COMPLETED);
+                            message(chatId, "Age updated successfully!" + text);
+                        } catch (Exception e){
+                            message(chatId, "Please enter a number only.");
+                        }
+                        break;
+
                 default:
                     message(chatId, "Send /start to use the bot.");
                     break;
@@ -87,11 +135,12 @@ public class MyBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return "8681756358:AAGoqS_Rgz-iTFHjn3yrnYssA7U2NthLch8";
+        return "";
     }
 
     @Override
     public String getBotUsername() {
-        return "testjavag2_bot";
+
+        return "";
     }
 }

@@ -1,12 +1,17 @@
 package uz.imaan.entity;
 
+import uz.imaan.entity.status.Status;
+
 import java.util.UUID;
 
 public class User {
     private UUID id;
     private Long chatId;
     private String name;    // ism → name
-    private Integer age;    // yosh → age
+    private Integer age;
+    public Status status;
+
+
 
     public UUID getId() {
         return id;
